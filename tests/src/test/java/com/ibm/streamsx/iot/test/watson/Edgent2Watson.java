@@ -62,7 +62,14 @@ public class Edgent2Watson {
         
         assertFalse(FAILED.get());
         
-        String deviceCfg = System.getProperty("streamsx.iot.test.device.cfg");
+        // define device config via property for ant script initiated tests (regression)
+        // or use default "device.cfg" in the tests/ directory
+        String deviceCfgString = System.getProperty("streamsx.iot.test.device.cfg");
+        if (deviceCfgString == null)
+        	deviceCfgString = "device.cfg";
+    	System.out.printf ("IOT test device config file: %s \n", deviceCfgString);
+
+    	String deviceCfg = deviceCfgString;
         assertNotNull(deviceCfg);
         assumeTrue(!"skip".equals(deviceCfg));
         

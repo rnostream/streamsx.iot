@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.junit.Test;
 
@@ -28,13 +29,9 @@ public class WatsonDeviceEventsTest {
     @Test
     public void testDeviceEventsAll() throws Exception {
         
-        File iotTkLocation = new File(System.getProperty("streamsx.iot.toolkitlocation"));
-        
         Topology topology = new Topology();
-
-        System.out.printf ("IOT ToolkitLocation used in Topology: %s", iotTkLocation);
-        SPL.addToolkit(topology,iotTkLocation);
-       
+        addToolkitUnderTest(topology);
+        
         // Generate events, but this test will ignore the device id and type
         // since it is fixed by the deviceCfg.
         JSONObject[] events = DeviceEventsTest.generateEvents(20);
@@ -72,6 +69,19 @@ public class WatsonDeviceEventsTest {
         assertMatchingEvents(events, results);  
         
         assertMatchingEvents(fea, tuplesFiltered.getResult());
+    }
+    
+    private void addToolkitUnderTest(Topology topology) throws IOException{
+        // define toolkit under test via property in ant scripts for regression test
+        String iotTkLocationString = System.getProperty("streamsx.iot.toolkitlocation");
+        if (iotTkLocationString==null){
+        	// default toolkit under test (StreamsStudio JUNIT): toolkit build in the repository  
+        	iotTkLocationString = System.getProperty("user.dir")+ "/../com.ibm.streamsx.iot";
+        }
+
+        File iotTkLocation = new File(iotTkLocationString);
+    	System.out.printf ("IOT ToolkitLocation used in Topology: %s \n", iotTkLocationString);
+    	SPL.addToolkit(topology, iotTkLocation);
     }
     
     private void assertMatchingEvents(JSONObject[] events, List<String> results) throws Exception {

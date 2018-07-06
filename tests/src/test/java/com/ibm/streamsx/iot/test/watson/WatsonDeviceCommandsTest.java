@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.junit.Test;
 
@@ -31,12 +32,8 @@ public class WatsonDeviceCommandsTest {
     @Test
     public void testDeviceCmdsAll() throws Exception {
                 
-        File iotTkLocation = new File(System.getProperty("streamsx.iot.toolkitlocation"));
-
         Topology topology = new Topology();
-        
-        System.out.printf ("IOT ToolkitLocation used in Topology: %s", iotTkLocation);
-        SPL.addToolkit(topology, iotTkLocation);
+        addToolkitUnderTest(topology);
         
         JSONObject[] commands = DeviceCommandsTest.generateCommands(20);
         
@@ -63,12 +60,8 @@ public class WatsonDeviceCommandsTest {
     @Test
     public void testDeviceCmdsFilter() throws Exception {
                 
-        File iotTkLocation = new File(System.getProperty("streamsx.iot.toolkitlocation"));
-
         Topology topology = new Topology();
-        
-        System.out.printf ("IOT ToolkitLocation used in Topology: %s", iotTkLocation);
-        SPL.addToolkit(topology, iotTkLocation);
+        addToolkitUnderTest(topology);
 
         JSONObject[] commands = DeviceCommandsTest.generateCommands(40);
         
@@ -103,6 +96,19 @@ public class WatsonDeviceCommandsTest {
         List<String> results = tuples.getResult();
         
         assertMatchingCommands(fca, results);     
+    }
+    
+    private void addToolkitUnderTest(Topology topology) throws IOException{
+        // define toolkit under test via property in ant scripts for regression test
+        String iotTkLocationString = System.getProperty("streamsx.iot.toolkitlocation");
+        if (iotTkLocationString==null){
+        	// default toolkit under test (StreamsStudio JUNIT): toolkit build in the repository  
+        	iotTkLocationString = System.getProperty("user.dir")+ "/../com.ibm.streamsx.iot";
+        }
+
+        File iotTkLocation = new File(iotTkLocationString);
+    	System.out.printf ("IOT ToolkitLocation used in Topology: %s \n", iotTkLocationString);
+    	SPL.addToolkit(topology, iotTkLocation);
     }
     
     private void assertMatchingCommands(JSONObject[] cmds, List<String> results) throws Exception {

@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.junit.Test;
 
@@ -45,11 +46,8 @@ public class DeviceEventsTest {
     private void testDeviceEventsAll(boolean allowFilter) throws Exception {
         
         Topology topology = new Topology();
-
-        File iotTkLocation = new File(System.getProperty("streamsx.iot.toolkitlocation"));
-        System.out.printf ("IOT ToolkitLocation used in Topology: %s", iotTkLocation);
-        SPL.addToolkit(topology, iotTkLocation);
-       
+        addToolkitUnderTest(topology);
+        
         JSONObject[] events = generateEvents(200);
         
         Simulate.simulateEvents(topology, 10, allowFilter, events);
@@ -101,10 +99,7 @@ public class DeviceEventsTest {
     private void testDeviceEventsEventId(boolean allowFilter, String[] typeIds, String...eventIds) throws Exception {
         
         Topology topology = new Topology();
-  
-        File iotTkLocation = new File(System.getProperty("streamsx.iot.toolkitlocation"));
-    	System.out.printf ("IOT ToolkitLocation used in Topology: %s", iotTkLocation);
-    	SPL.addToolkit(topology, iotTkLocation);
+        addToolkitUnderTest(topology);
         
         JSONObject[] events = generateEvents(200);
         
@@ -153,6 +148,19 @@ public class DeviceEventsTest {
         List<String> results = tuples.getResult();
         
         assertMatchingEvents(events, results);     
+    }
+    
+    private void addToolkitUnderTest(Topology topology) throws IOException{
+        // define toolkit under test via property in ant scripts for regression test
+        String iotTkLocationString = System.getProperty("streamsx.iot.toolkitlocation");
+        if (iotTkLocationString==null){
+        	// default toolkit under test (StreamsStudio JUNIT): toolkit build in the repository  
+        	iotTkLocationString = System.getProperty("user.dir")+ "/../com.ibm.streamsx.iot";
+        }
+
+        File iotTkLocation = new File(iotTkLocationString);
+    	System.out.printf ("IOT ToolkitLocation used in Topology: %s \n", iotTkLocationString);
+    	SPL.addToolkit(topology, iotTkLocation);
     }
     
     private void assertMatchingEvents(JSONObject[] events, List<String> results) throws Exception {

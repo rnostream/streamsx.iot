@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry kind="var" path="STREAMS_INSTALL/toolkits/com.ibm.streamsx.topology/lib/com.ibm.streamsx.topology.jar"/>
+	<classpathentry kind="lib" path="ext/quarks/target/java8/connectors/iot/lib/quarks.connectors.iot.jar"/>
+	<classpathentry kind="lib" path="ext/quarks/target/java8/connectors/iotf/lib/quarks.connectors.iotf.jar"/>
+	<classpathentry kind="lib" path="ext/quarks/target/java8/lib/quarks.providers.direct.jar"/>
+	<classpathentry kind="lib" path="ext/quarks/target/java8/lib/quarks.providers.iot.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="con" path="com.ibm.streams.java/com.ibm.streams.operator"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/General IoT Device Model"/>
+	<classpathentry kind="output" path="classes"/>
+</classpath>
